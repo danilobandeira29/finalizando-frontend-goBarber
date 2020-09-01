@@ -11,3 +11,20 @@
 > Nesses casos, eu posso converter o valor booleano para número, assim caso seja **true** será convertido para **1** e se for **false** será convertido para **0**.
 
 > Pode desabilitar a verificação ortográfica de uma tag html passando *spellCheck="false"*
+
+## Criação de página de resetar a senha
+1. Posso seguir o mesmo esquema de criação de página da página de *SignIn* e inserir os inputs de *password* e *password_confirmation* no *Form*.
+
+2. Checar com a validação do Yup se as senhas são iguais utilizando:
+```typescript
+const schema = Yup.object().shape({
+  password: Yup.string().required('Senha obrigatória'),
+  password_confirmation: Yup.string()
+    .oneOf([Yup.ref('password')], 'Confirmação incorreta')
+    .required('Confirmação obrigatória'),
+});
+```
+
+3. Caso tudo dê certo, redicionar o *user* para a página de *SignIn*.
+
+4. Adicionar a rota reset-password
