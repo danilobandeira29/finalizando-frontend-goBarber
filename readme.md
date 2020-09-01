@@ -12,7 +12,7 @@
 
 > Pode desabilitar a verificação ortográfica de uma tag html passando *spellCheck="false"*
 
-## Criação de página de resetar a senha
+## Criação de página de resetar senha
 1. Posso seguir o mesmo esquema de criação de página da página de *SignIn* e inserir os inputs de *password* e *password_confirmation* no *Form*.
 
 2. Checar com a validação do Yup se as senhas são iguais utilizando:
@@ -28,3 +28,27 @@ const schema = Yup.object().shape({
 3. Caso tudo dê certo, redicionar o *user* para a página de *SignIn*.
 
 4. Adicionar a rota reset-password
+
+## Conectando a API para resetar senha
+1. Conectar a api na rota */password/reset*, enviando *password*, *password_confirmation* e o *token*.
+
+2. Para receber o *token* do *query params*, utilizar do react-router-dom o hook **useLocation**.
+```typescript
+import { useHistory, useLocation } from 'react-router-dom';
+
+const { search } = useLocation();
+
+// ou posso utilizar
+// const token = search.replace('?token=', '');
+const [, token] = search.split('?token=');
+
+if (!token) {
+  throw new Error();
+}
+
+await api.post('/password/reset', {
+  password,
+  password_confirmation,
+  token,
+});
+```
