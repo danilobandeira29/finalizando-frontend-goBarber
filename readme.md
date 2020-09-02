@@ -52,3 +52,127 @@ await api.post('/password/reset', {
   token,
 });
 ```
+## Criando Header
+1. Fazer a estruturação da página
+```typescript
+import React from 'react';
+
+import imgLogo from '../../assets/logo.svg';
+import { useAuth } from '../../hooks/auth';
+
+import { Container, Header, HeaderContent, Profile } from './styles';
+
+const Dashboard: React.FC = () => {
+  const { signOut, user } = useAuth();
+
+  return (
+    <Container>
+      <Header>
+        <HeaderContent>
+          <img src={imgLogo} src="GoBarber" />
+
+          <Profile>
+            <img src={user.avatar_url} src={user.name} />
+            <div>
+              <span>Bem vindo,</span>
+              <strong>{user.name}</strong>
+            </div>
+          </Profile>
+
+          <button type="button" onClick={signOut}>
+            <FiPower />
+          </button>
+
+        </HeaderContent>
+      </Header>
+
+    </Container>
+  );
+}
+
+export default Dashboard;
+
+```
+2. Fazer a estilização
+```typescript
+import styled from 'styled-components';
+
+export const Container = styled.div`
+  
+`;
+
+export const Header = styled.header`
+  padding: 32px 0;
+  background: #28262e;
+  
+`;
+
+export const HeaderContent = styled.div`
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+
+
+  > img {
+    height: 80px;
+  }
+
+  button {
+    margin-left: 0;
+    background: transparent;
+    border: 0;
+
+    svg {
+      color: #999591;
+      height: 20px;
+      width: 20px;
+    }
+  }
+`;
+
+export const Profile = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: 80px;
+
+  img {
+    height: 56px;
+    width: 56px;
+    border-radius: 50%;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    line-height: 24px;
+    margin-left: 16px;
+
+    span {
+      color: #f4ede8;
+    }
+
+    strong {
+      color: #ff9000;
+    }
+  }
+`;
+
+```
+3. Criar a interface para *User* no hook auth
+```typescript
+
+interface User {
+  id: string;
+  avatar_url: string;
+  name: string;
+}
+
+interface AuthState {
+  token: string;
+  user: User;
+}
+
+...
+
+```
