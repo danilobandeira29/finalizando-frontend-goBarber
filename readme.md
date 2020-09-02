@@ -176,3 +176,174 @@ interface AuthState {
 ...
 
 ```
+
+## Próximo agendamento
+1. Fazer a estruturação do Content(Schedule, NextAppointment, Calendar)
+
+```typescript
+const Dashboard: React.FC = () => {
+  const { signOut, user } = useAuth();
+
+  return (
+    <Container>
+      <Header>
+        <HeaderContent>
+          <img src={imgLogo} src="GoBarber" />
+
+          <Profile>
+            <img src={user.avatar_url} src={user.name} />
+            <div>
+              <span>Bem vindo,</span>
+              <strong>{user.name}</strong>
+            </div>
+          </Profile>
+
+          <button type="button" onClick={signOut}>
+            <FiPower />
+          </button>
+
+        </HeaderContent>
+      </Header>
+
+      <Content>
+        <Schedule>
+          <h1>Horários agendados</h1>
+          <p>
+            <span>Hoje</span>
+            <span>Dia 06</span>
+            <span>Segunda-feira</span>
+          </p>
+
+          <NextAppointment>
+          <strong>Atendimento a seguir</strong>
+          <div>
+                <img
+                  src="https://avatars3.githubusercontent.com/u/61798805?s=460&u=e3c897fa042ae6b54fa8b262b6f146d8174cb9eb&v=4"
+                  alt="Danilo Bandeira"
+                />
+                <strong>Danilo Bandeira</strong>
+                <span>
+                  <FiClock />
+                  08:00
+                </span>
+              </div>
+          </NextAppointment>
+        </Schedule>
+        <Calendar />
+      </Content>
+
+    </Container>
+  );
+}
+
+export default Dashboard;
+
+```
+
+2. Fazer a estilização
+```typescript
+import styled from 'styled-components';
+
+export const Content = styled.main`
+  max-width: 1120px;
+  margin: 64px auto;
+  display: flex;
+`;
+
+export const Schedule = styled.section`
+  flex: 1;
+  margin-right: 120px;
+
+  h1 {
+    font-size: 36px;
+  }
+
+  p {
+    margin-top: 12px;
+    color: #ff9000;
+    display: flex;
+    font-weight: 500;
+    align-items: center;
+
+    span + span {
+      margin-left: 8px;
+      display: flex;
+      align-items: center;
+    }
+
+    span + span::before {
+      content: '';
+      width: 2px;
+      height: 12px;
+      background: #ff9000;
+      margin-right: 8px;
+    }
+  }
+`;
+
+export const NextAppointment = styled.div`
+  margin-top: 64px;
+
+  > strong {
+    color: #999591;
+    font-size: 20px;
+    font-weight: 400px;
+  }
+
+  div {
+    background: #3e3b47;
+    border-radius: 10px;
+    padding: 16px 24px;
+    margin-top: 24px;
+
+    display: flex;
+    align-items: center;
+
+    position: relative;
+
+    &::before {
+      position: absolute;
+      height: 80%;
+      width: 2px;
+      left: 0;
+      top: 10%;
+      content: '';
+      background: #ff9000;
+      border-radius: 10px 0 0 10px;
+      transform: matrix(-1, 0, 0, 1, 0, 0);
+    }
+
+    img {
+      height: 80px;
+      width: 80px;
+      border-radius: 50%;
+    }
+
+    strong {
+      margin-left: 24px;
+      font-size: 24px;
+      color: #f4ede8;
+    }
+
+    span {
+      margin-left: auto;
+      color: #999591;
+      display: flex;
+      align-items: center;
+      font-size: 20px;
+
+      svg {
+        height: 20px;
+        width: 20px;
+        color: #ff9000;
+        margin-right: 12px;
+      }
+    }
+  }
+`;
+
+export const Calendar = styled.aside`
+  width: 380px;
+`;
+
+```
