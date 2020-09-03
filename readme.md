@@ -655,3 +655,76 @@ const disabledDays = useMemo(() => {
 api.defaults.headers.authorization = `Bearer ${token}`
 
 ```
+
+## Agendamentos da API
+1. Devo alterar a informação que se refere a data da listagem de agendamentos
+```typescript
+import React, { useMemo, useState } from 'react';
+import { isToday, format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
+
+
+
+const selectedDayAsText = useMemo(() => {
+  return format(selectedDate, "'Dia' dd 'de' MMMM", 
+    {
+      locale: ptBR,
+    }
+  );
+}, [selectedDate]);
+
+const selectedWeekAsText = useMemo(() => {
+    return format(selectedDate, 'cccc', {
+      locale: ptBR,
+    });
+  }, [selectedDate]);
+});
+
+return (
+  ...
+  <Schedule>
+    <h1>Horários agendados</h1>
+    <p>
+      {isToday(selectedDate) && <span>Hoje</span>}
+      <span>{selectedDateAsText}</span>
+      <span>{selectedWeekAsText}</span>
+    </p>
+  ...
+  </Schedule>
+);
+```
+
+### Todo Hook funciona dessa forma: vou disparar algo, sempre que isso mudar. O que muda é apenas o retorno.
+
+- useEffect executa uma função
+- useCallback retorna uma função
+- useMemo retorna um valor(valor já calculado)
+
+2. Conectar a API para fazer a listagem de agendamentos e verificar se está retornando.
+```typescript
+// não preciso tipar todo que vem de retorno da api
+interface Appointments {
+  id: string;
+  date: string;
+  user: {
+    name: string;
+    avatar_url: string;
+  };
+};
+
+const [selectedDate, setSelectedDate] = useState(new Date());
+const [appointments, setAppointments] = useState<Appointments[]>([])
+
+useEffect(() => {
+  api.get('/appointments/me', {
+    params: {
+      year: selectedDate.getFullYear(),
+      month: selectedDate.getMonth() + 1,
+      day: selectedDate.getDate(), 
+    }
+  }).then(response => setAppointments(response.data));
+
+  console.log(appointments);
+}, [selectedDate]);
+
+```
