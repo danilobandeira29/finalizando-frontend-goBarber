@@ -569,3 +569,73 @@ export const Calendar = styled.div`
 `;
 
 ```
+
+## Disponibilidade do mês
+
+1. Preciso armazenar o mês atual que o usuário selecionou no *day picker*, pois eu preciso fazer uma requisição na api TODA vez que o usuário alterar o mês, ou seja, **preciso de um efeito coleteral(useEffect)**.
+2. Criar uma função para lidar com *onMonthChange* do *day picker*.
+```typescript
+interface MonthAvailabilityItem {
+  day: number;
+  available: boolean;
+}
+
+const [currentMonth, setCurrentMonth] = useState(new Date());
+const [monthAvailability, setMonthAvailability] = useState<
+  MonthAvailabilityItem[]
+>([]);
+
+
+const handleMonthChange = useCallback((month: Date) => {
+  setCurrentMonth(month);
+}, []);
+
+useEffect(() => {
+  api.get(`/providers/${user.id}/month-availability`, {
+    params: {
+      year: currentMonth.getFullyear(),
+      month: currentMonth.getMonth() + 1,
+    }
+  }).then(response => setMonthAvailability(response.data));
+}, [currentMonth]);
+
+```
+### Nunca devo executar funções de alterações/conversão de valores direto no componente(no return, em tempo de renderização)!! Pois qualquer cálculo dentro do return do componente, ele irá renderizar TODO o componente novamente.
+### Os hooks foram criados pensando nisso, em renderizações desnecessárias.
+
+Um bom exemplo disso é o *useCallback*, que só irá renderizar a função uma única vez(de acordo com o array de dependências).
+
+Exemplo: 
+```typescript
+const handleSubmit = useCallback((data: DataForm) => {
+  ...
+}, []);
+
+```
+Nesse caso, caso o componente seja renderizado mais de uma vez, essa função não sofrerá essa renderização.
+
+Existem também o **useMemo**, que irá fazer alguma alteração/conversão/cálculo somente quando necessário.
+
+```typescript
+const disabledDays = useMemo(() => {
+  const dates = monthAvailability
+  .filter(monthDay => monthDay.available === false)
+  .map(monthDay => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+
+    const date = new Date(year, month, monthDay.day);
+  });
+
+  return dates;
+}, [currentMonth, monthAvailability]);
+
+```
+3. Passar essa variável *disabledDays* para dentro do *disabledDays* do **daypicker**.
+
+4. Enviar o token para que seja possível fazer a requisição. Ir na context api *auth.ts* e setar o token no headers do axios, **tanto no signIn quando o usuário der F5 na página(localStorage)**.
+
+```typescript
+api.defaults.headers.authorization = `Bearer ${token}`
+
+```
