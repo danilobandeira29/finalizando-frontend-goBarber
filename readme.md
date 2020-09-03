@@ -1,3 +1,19 @@
+# 📝 Sobre
+Anotações que faço ao longo dos estudos sobre:
+- ReactJS
+- Hooks (context api, useCallback, useMemo,...)
+- API REST
+- TDD(Test-Driven Development)
+
+# 🏆 Desafio
+- Anotar a forma que resolvo os problemas, traçando caminhos e afins.
+- Colocar em prática os conhecimentos que são adquiridos diáriamente nos meus estudos.
+
+# 👀 Projetos nos quais estou aplicando esses conceitos
+Disponível em: [Frontend GoBarber](https://github.com/danilobandeira29/frontend-gobarber-web)
+
+---
+
 ## Criando página de recuperação
 1. Posso copiar a página de SignIn e fazer as alterações necessárias como nome de variável e remoção de alguns inputs.
 2. Criar a nova rota para recuperação de senha.
