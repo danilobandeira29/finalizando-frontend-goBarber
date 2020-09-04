@@ -813,3 +813,32 @@ useEffect(() => {
 
 ```
 ### Não fazer formatação de dados dentro do return do React!!
+
+## Finalizando listagem de agendamentos
+1. Mostrar o *Agendamento a seguir* de forma correta. Criar um cálculo para pegar o primeiro item do array de agendamentos(já que eles já estão em ordem) e verificar se ele é depois do horário atual.
+
+```typescript
+const nextAppointment = useMemo(() => {
+  return appointments.find(appointment => isAfter(parsedISO(appointment.date), new Date()))
+}, [appointments]);
+
+
+ {isToday(selectedDate) && nextAppointment && (
+    <NextAppointment>
+      <strong>Agendamento a seguir</strong>
+
+      <div>
+        <img
+          src={nextAppointment.user.avatar_url}
+          alt={nextAppointment.user.name}
+        />
+        <strong>{nextAppointment.user.name}</strong>
+        <span>
+          <FiClock />
+          {nextAppointment.hourFormatted}
+        </span>
+      </div>
+    </NextAppointment>
+  )}
+
+```
