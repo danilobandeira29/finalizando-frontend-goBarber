@@ -845,3 +845,54 @@ const nextAppointment = useMemo(() => {
 ## Página de perfil
 1. Fazer a criação da page de Perfil e tentar estilizar de acordo com o figma.
 > Posso utilizar margin negativa pra estilizar o formulário de acordo.
+
+## Troca de avatar
+1. Inserir no button do *AvatarProfile* um *input* do tipo *file*.
+2. Esse button agora será um label, com a prop htmlFor="id_do_input_file".
+3. Adicionar a prop *onChange* no input element, para que ele chame a função handleAvatarChange, que irá receber e: ChangeEvent<HTMLInputElement>
+
+```typescript
+const handleAvatarChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+  if (event.target.files){
+    const data = new FormData();
+
+    data.append('avatar', event.target.files[0]);
+
+    api.patch('/users/avatar', data).then(response => {
+      updateUser(response.data);
+
+      addToast({
+        type: "success",
+        title: "Avatar atualizado!",
+      })
+    });
+  }
+}, [updateUser]);
+
+return (
+  ...
+  <AvatarProfile>
+    <img src={user.avatar_url} alt={user.name} />
+    <label htmlFor="avatar" >
+      <input 
+        type="file"
+        id="avatar"
+        onChange={handleAvatarChange}
+        style={{ display: none }}
+      />
+    </label>
+  </AvatarProfile>
+);
+```
+
+4. Ir no hook *auth.ts* e fazer a criação do novo método updateUser
+```typescript
+  ...
+  const updateUser = useCallback((user: User) => {
+    setData({
+      token: data.token,
+      user
+    });
+    localStorage.setItem('GoBarber:user', JSON.stringify(user));
+  }, [data.token]);
+```
