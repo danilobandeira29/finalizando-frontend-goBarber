@@ -728,3 +728,88 @@ useEffect(() => {
 }, [selectedDate]);
 
 ```
+
+## Exibindo agendamentos em tela
+1. Primeiro, deve ser feito a separação dos appointments pelo turno(manhã, tarde). Para isso, será feito um cálculo(useMemo) para que o valor retornado seja da listagem de appointments antes das 12h e depois ou igual as 12h.
+```typescript
+const morningAppointments = useMemo(() => {
+  return appointments.map(appointment => parseISO(appointment.date).getHours() < 12 );
+}, [appointments]);
+
+const afternoonAppointments = useMemo(() => {
+  return appointments.map(appointment => parseISO(appointment.date).getHours() >= 12 );
+}, [appointments]);
+
+```
+2. Fazer a listagem de appointments de acordo com o turno
+```typescript
+const Dashboard: React.FC = () => {
+  ...
+const morningAppointments = useMemo(() => {
+  return appointments.map(appointment => parseISO(appointment.date).getHours() < 12 );
+}, [appointments]);
+
+const afternoonAppointments = useMemo(() => {
+  return appointments.map(appointment => parseISO(appointment.date).getHours() >= 12 );
+}, [appointments]);
+
+  return (
+
+    ...
+    {morningAppointments.map(appointment => {
+      <Appointment key={appointment.id}>
+
+        <span>
+          <FiClock />
+          08:00
+        </span>
+
+        <div>
+          <img
+            src={appointment.user.avatar_url}
+            alt={appointment.user.name}
+          />
+          <strong>{appointment.user.name}</strong>
+        </div>
+
+      </Appointment>
+    })}
+  );
+}
+```
+
+3. Fazer a formatação da hora quando tiver os dados da API, ou seja, no useEffect. Logo em seguida, fazer a alteração no appointment para exibir a hora do agendamento dinamicamente({appointment.hourFormatted}).
+```typescript
+interface Appointments {
+  id: string;
+  date: string;
+  hourFormatted: string;
+  user: {
+    name: string;
+    avatar_url: string;
+  };
+}
+
+useEffect(() => {
+  api
+    .get<Appointments[]>('/appointments/me', {
+      params: {
+        year: selectedDate.getFullYear(),
+        month: selectedDate.getMonth() + 1,
+        day: selectedDate.getDate(),
+      },
+    })
+    .then(response => {
+      const appointmentFormatted = response.data.map(appointment => {
+        return {
+          ...appointment,
+          hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
+        };
+      });
+
+      setAppointments(appointmentFormatted);
+    });
+}, [selectedDate]);
+
+```
+### Não fazer formatação de dados dentro do return do React!!
