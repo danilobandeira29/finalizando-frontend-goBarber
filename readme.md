@@ -842,3 +842,6 @@ const nextAppointment = useMemo(() => {
   )}
 
 ```
+## Página de perfil
+1. Fazer a criação da page de Perfil e tentar estilizar de acordo com o figma.
+> Posso utilizar margin negativa pra estilizar o formulário de acordo.
