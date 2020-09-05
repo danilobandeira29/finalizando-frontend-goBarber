@@ -896,3 +896,58 @@ return (
     localStorage.setItem('GoBarber:user', JSON.stringify(user));
   }, [data.token]);
 ```
+
+## Alteração de dados
+1. Fazer validação dos inputs utilizando o Yup.
+2. Fazer a chamada a api para a rota profile pra que seja possível atualizar: nome, email, senha.
+
+```typescript
+const handleSubmitForm = (async(data: ProfileFormData) => {
+  const schema = Yup.object().shape({
+    name: Yup.string().required('Nome obrigatório'),
+    email: Yup.string().required('E-mail obrigatório').email('Dgitei um email válido'),
+    old_password: Yup.string(),
+    password: Yup.string().when('old_password', {
+      is: value => !!value.length,
+      then: Yup.string().required('Nova senha obrigatória'),
+      otherwise: Yup.string(),
+    }),
+    password_confirmation: Yup.string().when('old_password', {
+      is: value => !!value.length,
+      then: Yup.string().required('Confirmação obrigatória'),
+      otherwise: Yup.string(),
+    }).oneOf([Yup.ref('password')], 'Confirmação incorreta'),
+  }),
+
+  await schema.validate(data, {
+    abortEarly: false,
+  });
+
+  const { name, email, old_password, password, password_confirmation } = data;
+
+  // dessa forma será possível atualizar apenas o name e email sem passar a senha
+  const formData = Object.assign({
+    name, email,
+  }, old_password ? { old_password, password, password_confirmation } : {}),
+
+  // ou posso utilizar o spread operator
+  // const formData = {
+  //   name, email, 
+  // ...(old_password 
+  //   ? { old_password, password, password_confirmation } 
+  //   : {}),
+  // }
+
+  const response = await api.put('/profile', formData);
+
+  updateUser(response.data);
+
+  addToast({
+    type: 'success',
+    title: 'Perfil atualizado',
+  });
+
+  history.push('/dashboard');
+
+})
+```
